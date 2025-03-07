@@ -16,6 +16,13 @@ public class LoginMonitorController : ControllerBase
         _loginMonitorService = loginMonitorService;
     }
 
+    [HttpGet("api/logins/export")]
+    public async Task<IActionResult> GetLoginMonitorEventsReport()
+    {
+        var loginEventCsvBytes = await _loginMonitorService.GetLoginMonitorEventsReportAsync();
+        return File(loginEventCsvBytes, "text/csv", "login-monitor-events.csv");
+    }
+
     [HttpGet("api/logins")]
     public async Task<ActionResult<List<LoginMonitorEvent>>> GetLoginMonitorEvents()
     {

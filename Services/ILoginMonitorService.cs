@@ -4,6 +4,7 @@ namespace LoginMonitorAPI.Services;
 
 public interface ILoginMonitorService
 {
+    Task<byte[]> GetLoginMonitorEventsReportAsync();
     Task<IEnumerable<LoginMonitorEvent?>> GetLoginMonitorEventsAsync();
     Task<IEnumerable<LoginMonitorEvent?>> GetLoginMonitorEventsForUserAsync(int userId);
     Task<LoginMonitorEvent?> GetLoginMonitorEventAsync(int id);
