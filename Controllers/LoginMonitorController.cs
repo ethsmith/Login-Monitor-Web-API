@@ -1,3 +1,4 @@
+using LoginMonitorAPI.Dto;
 using LoginMonitorAPI.Models;
 using LoginMonitorAPI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -5,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace LoginMonitorAPI.Controllers;
 
 [ApiController]
-[Route("api/login-events")]
+// [Route("api/[controller]")]
 public class LoginMonitorController : ControllerBase
 {
     private readonly ILoginMonitorService _loginMonitorService;
@@ -15,14 +16,14 @@ public class LoginMonitorController : ControllerBase
         _loginMonitorService = loginMonitorService;
     }
 
-    [HttpGet]
+    [HttpGet("api/logins")]
     public async Task<ActionResult<List<LoginMonitorEvent>>> GetLoginMonitorEvents()
     {
         var loginMonitorEvents = await _loginMonitorService.GetLoginMonitorEventsAsync();
         return Ok(loginMonitorEvents);
     }
 
-    [HttpGet("{id:int}")]
+    [HttpGet("api/login/{id:int}")]
     public async Task<ActionResult<LoginMonitorEvent>> GetLoginMonitorEvent(int id)
     {
         var loginMonitorEvent = await _loginMonitorService.GetLoginMonitorEventAsync(id);
@@ -30,31 +31,56 @@ public class LoginMonitorController : ControllerBase
         return Ok(loginMonitorEvent);
     }
 
-    [HttpPost]
-    public async Task<ActionResult<LoginMonitorEvent>> PostLoginMonitorEvent([FromBody] LoginMonitorEvent? loginMonitorEvent)
+    [HttpPost("api/login")]
+    public async Task<ActionResult<LoginMonitorEvent>> PostLoginMonitorEvent([FromBody] LoginEventDto? loginDto)
     {
         var role = HttpContext.Items["Role"] as string;
-        if (role != "Admin") return Unauthorized();
         
-        if (loginMonitorEvent == null) return BadRequest();
+        if (role != "Admin") return Unauthorized();
+        if (loginDto == null) return BadRequest();
+        
+        var loginMonitorEvent = new LoginMonitorEvent
+        {
+            UserId = loginDto.UserId,
+            FirstName = loginDto.FirstName,
+            LastName = loginDto.LastName,
+            IpAddress = loginDto.IpAddress,
+            UserAgent = loginDto.UserAgent,
+            LoginTime = loginDto.LoginTime,
+            WasSuccessful = loginDto.WasSuccessful
+        };
+        
         await _loginMonitorService.AddLoginMonitorEventAsync(loginMonitorEvent);
         return CreatedAtAction(nameof(GetLoginMonitorEvent), new { id = loginMonitorEvent.Id }, loginMonitorEvent);
     }
     
-    [HttpPut("{id}")]
-    public async Task<ActionResult<LoginMonitorEvent>> PutLoginMonitorEvent(int id, [FromBody] LoginMonitorEvent? loginMonitorEvent)
+    [HttpPut("api/login/{id}")]
+    public async Task<ActionResult<LoginMonitorEvent>> PutLoginMonitorEvent(int id, [FromBody] LoginEventDto? loginDto)
     {
         var role = HttpContext.Items["Role"] as string;
         if (role != "Admin") return Unauthorized();
         
-        if (loginMonitorEvent == null || loginMonitorEvent.Id != id) return BadRequest();
+        if (loginDto == null) return BadRequest();
         var existingLoginMonitorEvent = await _loginMonitorService.GetLoginMonitorEventAsync(id);
         if (existingLoginMonitorEvent == null) return NotFound();
+        
+        var loginMonitorEvent = new LoginMonitorEvent
+        {
+            Id = id,
+            UserId = loginDto.UserId,
+            FirstName = loginDto.FirstName,
+            LastName = loginDto.LastName,
+            IpAddress = loginDto.IpAddress,
+            UserAgent = loginDto.UserAgent,
+            LoginTime = loginDto.LoginTime,
+            WasSuccessful = loginDto.WasSuccessful
+        };
+        
         await _loginMonitorService.UpdateLoginMonitorEventAsync(loginMonitorEvent);
         return Ok(loginMonitorEvent);
     }
     
-    [HttpDelete("{id}")]
+    [HttpDelete("api/login/{id}")]
     public async Task<ActionResult> DeleteLoginMonitorEvent(int id)
     {
         var role = HttpContext.Items["Role"] as string;

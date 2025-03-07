@@ -37,3 +37,6 @@ to a Git repository.
   "AllowedHosts": "*"
 }
 ```
+#### Example of Get All Request
+Note: You will need to set your request headers to pass the api key with key 'x-api-key'.
+![img.png](img.png)
