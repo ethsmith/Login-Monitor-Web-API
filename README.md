@@ -2,6 +2,19 @@
 ### A simple API to monitor user logins
 Just a practice API to get reacquainted with .NET Core and Entity Framework Core.
 
+#### Features
+- Get all login records
+- Get a login record by ID
+- Get all login records for a user
+- Export all login records to a CSV file
+- Add a login record
+- Update a login record
+- Delete a login record
+- API key authentication
+- Admin and User API keys
+- Swagger documentation
+- PostgreSQL database with Entity Framework Core
+
 #### Example POST Request
 ```json
 {
