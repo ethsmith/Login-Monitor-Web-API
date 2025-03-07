@@ -16,6 +16,11 @@ public class LoginMonitorEventRepository : ILoginMonitorEventRepository
     {
         return await _context.LoginMonitorEvents.ToListAsync();
     }
+    
+    public async Task<IEnumerable<LoginMonitorEvent?>> GetLoginMonitorEventsForUserAsync(int userId)
+    {
+        return await _context.LoginMonitorEvents.Where(e => e != null && e.UserId == userId).ToListAsync();
+    }
 
     public async Task<LoginMonitorEvent?> GetLoginMonitorEventAsync(int id)
     {

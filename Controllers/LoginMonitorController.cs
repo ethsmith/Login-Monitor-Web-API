@@ -23,6 +23,13 @@ public class LoginMonitorController : ControllerBase
         return Ok(loginMonitorEvents);
     }
 
+    [HttpGet("api/logins/{userId:int}")]
+    public async Task<ActionResult<List<LoginMonitorEvent>>> GetLoginMonitorEvents(int userId)
+    {
+        var loginMonitorEventsForUser = await _loginMonitorService.GetLoginMonitorEventsForUserAsync(userId);
+        return Ok(loginMonitorEventsForUser);
+    }
+
     [HttpGet("api/login/{id:int}")]
     public async Task<ActionResult<LoginMonitorEvent>> GetLoginMonitorEvent(int id)
     {
