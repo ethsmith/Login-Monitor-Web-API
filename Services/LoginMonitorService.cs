@@ -1,4 +1,7 @@
-﻿using LoginMonitorAPI.Data;
+﻿using System.Text.Json;
+using Aspose.Cells;
+using Aspose.Cells.Utility;
+using LoginMonitorAPI.Data;
 using LoginMonitorAPI.Models;
 
 namespace LoginMonitorAPI.Services;
@@ -10,6 +13,24 @@ public class LoginMonitorService : ILoginMonitorService
     public LoginMonitorService(ILoginMonitorEventRepository loginMonitorEventRepository)
     {
         _loginMonitorEventRepository = loginMonitorEventRepository;
+    }
+    
+    public async Task<byte[]> GetLoginMonitorEventsReportAsync()
+    {
+        var loginMonitorEvents = await _loginMonitorEventRepository.GetLoginMonitorEventsAsync();
+        var workbook = new Workbook();
+        var worksheet = workbook.Worksheets[0];
+
+        var layoutOptions = new JsonLayoutOptions();
+        layoutOptions.ArrayAsTable = true;
+        
+        JsonUtility.ImportData(JsonSerializer.Serialize(loginMonitorEvents), worksheet.Cells, 0, 0, layoutOptions);
+
+        using (MemoryStream stream = new MemoryStream())
+        {
+            workbook.Save(stream, SaveFormat.Csv);
+            return stream.ToArray();
+        }
     }
     
     public async Task<IEnumerable<LoginMonitorEvent?>> GetLoginMonitorEventsAsync()
