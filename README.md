@@ -39,4 +39,4 @@ to a Git repository.
 ```
 #### Example of Get All Request
 Note: You will need to set your request headers to pass the api key with key 'x-api-key'.
-![img.png](img.png)
+![img.png](https://i.ibb.co/yFT5hGSB/Screenshot-2025-03-07-100342.png)
